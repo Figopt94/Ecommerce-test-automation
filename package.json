@@ -4,9 +4,9 @@
   "description": "Production-ready E2E test automation framework using Playwright",
   "type": "module",
   "scripts": {
-    "test": "playwright test",
-    "test:smoke": "playwright test tests/smoke --workers=3",
-    "test:regression": "playwright test tests/regression",
+    "test": "node --no-warnings=ExperimentalWarning node_modules/.bin/playwright test",
+    "test:smoke": "node --no-warnings=ExperimentalWarning node_modules/.bin/playwright test tests/smoke --workers=3",
+    "test:regression": "node --no-warnings=ExperimentalWarning node_modules/.bin/playwright test tests/regression",
     "test:e2e": "playwright test tests/e2e",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
@@ -27,6 +27,6 @@
   "author": "Filipe Rodrigues",
   "license": "MIT",
   "devDependencies": {
-    "@playwright/test": "^1.40.0"
+    "@playwright/test": "^1.57.0"
   }
 }
