@@ -2,7 +2,7 @@
 
 ![Playwright](https://img.shields.io/badge/Playwright-1.57-45ba4b?logo=playwright)
 [![Playwright Tests](https://github.com/Figopt94/Ecommerce-test-automation/actions/workflows/playwright-tests.yml/badge.svg)](https://github.com/Figopt94/Ecommerce-test-automation/actions/workflows/playwright-tests.yml)
-![Tests](https://img.shields.io/badge/tests-45%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-105%20passing-brightgreen)
 ![Cross-Browser](https://img.shields.io/badge/browsers-3-blue)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -30,9 +30,9 @@ This framework demonstrates enterprise-level test automation best practices:
 | Suite | Tests | Status | Coverage |
 |-------|-------|--------|----------|
 | **Smoke Tests** | 5 | ✅ Passing | Critical user paths |
-| **Regression Tests** | 10 | ✅ Passing | Full functionality |
-| **E2E Tests** | 0 | 🔄 In Progress | Complete user journeys |
-| **Total** | **15** | **100%** | **45 executions** (3 browsers) |
+| **Regression Tests** | 30 | ✅ Passing | Full functionality |
+| **E2E Tests** | 4 | ✅ Passing | Complete user journeys |
+| **Total** | **35** | **100%** | **105 executions** (3 browsers) |
 
 ### Test Scenarios
 
@@ -53,6 +53,39 @@ This framework demonstrates enterprise-level test automation best practices:
 - ✅ Price sorting (Low-High, High-Low)
 - ✅ Navigation flows
 - ✅ Logout functionality
+
+**Cart (10 tests)**
+- ✅ Navigate to cart page
+- ✅ Empty cart validation
+- ✅ Single product display
+- ✅ Multiple products display
+- ✅ Correct item quantity
+- ✅ Correct item price
+- ✅ Remove item from cart
+- ✅ Update cart after removal
+- ✅ Continue shopping navigation
+- ✅ Proceed to checkout navigation
+
+**Checkout Flow (13 tests)**
+- ✅ Navigate to checkout step one
+- ✅ Error on empty fields
+- ✅ Error on missing first name
+- ✅ Error on missing last name
+- ✅ Error on missing zip code
+- ✅ Proceed to order overview
+- ✅ Items displayed in overview
+- ✅ Correct subtotal
+- ✅ Tax display
+- ✅ Total includes tax
+- ✅ Complete order successfully
+- ✅ Back to inventory after order
+- ✅ Cancel checkout
+
+**E2E Purchase Flow (4 tests)**
+- ✅ Full purchase with single product
+- ✅ Full purchase with multiple products
+- ✅ Purchase and return for new purchase
+- ✅ Sort products then purchase
 
 ---
 
@@ -134,15 +167,21 @@ ecommerce-test-automation/
 ├── pages/                          # Page Object Models
 │   ├── BasePage.js                # Base class with common methods
 │   ├── LoginPage.js               # Login page object
-│   └── InventoryPage.js           # Inventory page object
+│   ├── InventoryPage.js           # Inventory page object
+│   ├── CartPage.js                # Cart page object
+│   └── CheckoutPage.js            # Checkout pages object (step 1, 2 & complete)
 ├── tests/
 │   ├── smoke/                     # Critical path tests
 │   │   └── login.spec.js
 │   ├── regression/                # Full regression suite
-│   │   └── inventory.spec.js
-│   └── e2e/                       # End-to-end scenarios (planned)
+│   │   ├── inventory.spec.js
+│   │   ├── cart.spec.js
+│   │   └── checkout.spec.js
+│   └── e2e/                       # End-to-end scenarios
+│       └── purchase_flow.spec.js
 ├── test-data/
-│   └── users.json                 # Test user credentials
+│   ├── users.json                 # Test user credentials
+│   └── checkout.json              # Checkout form test data
 ├── utils/
 │   └── Constants.js               # Application constants
 ├── reports/                        # Test execution reports
@@ -338,18 +377,15 @@ npx playwright show-trace trace.zip
 - [x] Base framework architecture (POM)
 - [x] Login functionality (5 tests)
 - [x] Inventory management (10 tests)
+- [x] Cart functionality (10 tests)
+- [x] Checkout flow (13 tests)
+- [x] Complete E2E purchase flow (4 tests)
 - [x] Cross-browser testing
 - [x] CI/CD pipeline
 - [x] Comprehensive documentation
 - [x] Test data management
 
-### 🔄 In Progress
-- [ ] Cart functionality
-- [ ] Checkout flow
-- [ ] Payment processing
-
 ### ⏳ Planned
-- [ ] Complete E2E purchase flow
 - [ ] API testing integration
 - [ ] Performance testing
 - [ ] Visual regression testing

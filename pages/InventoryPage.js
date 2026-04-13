@@ -10,8 +10,8 @@ export class InventoryPage extends BasePage {
         this.inventoryItemName = '.inventory_item_name';
         this.inventoryItemPrice = '.inventory_item_price';
         this.inventoryItemDescription = '.inventory_item_desc';
-        this.addToCartButton = (productName) => `//div[text()='${productName}']/ancestor::div[@class='inventory_item']//button[contains(@class,'btn_inventory')]`;
-        this.removeFromCartButton = (productName) => `//div[text()='${productName}']/ancestor::div[@class='inventory_item']//button[contains(text(),'Remove')]`;
+        this.addToCartButton = (productName) => `//div[text()='${productName}']/ancestor::div[@class='inventory_item']//button[contains(@id,'add-to-cart')]`;
+        this.removeFromCartButton = (productName) => `//div[text()='${productName}']/ancestor::div[@class='inventory_item']//button[contains(@id, 'remove')]`;
         this.shoppingCartBadge = '.shopping_cart_badge';
         this.shoppingCartLink = '.shopping_cart_link';
         this.productSortDropdown = '.product_sort_container';
@@ -32,9 +32,8 @@ export class InventoryPage extends BasePage {
      */
     async getAllProductNames() {
         await this.waitForPageLoad();
-        return await this.page.$$eval(this.inventoryItemName, 
-            elements => elements.map(el => el.textContent)
-        );
+        const elements = await this.page.locator(this.inventoryItemName).all();
+        return await Promise.all(elements.map(el => el.textContent()));
     }
 
     /**
@@ -43,11 +42,18 @@ export class InventoryPage extends BasePage {
      */
     async getAllProductPrices() {
         await this.waitForPageLoad();
-        const priceTexts = await this.page.$$eval(this.inventoryItemPrice,
-            elements => elements.map(el => el.textContent)
-        );
-        // Convert "$29.99" to 29.99
+        const elements = await this.page.locator(this.inventoryItemPrice).all();
+        const priceTexts = await Promise.all(elements.map(el => el.textContent()));
         return priceTexts.map(price => parseFloat(price.replace('$', '')));
+    }
+
+    /**
+     * Get product count
+     * @returns {Promise<number>} Number of products displayed
+     */
+    async getProductCount() {
+        await this.waitForPageLoad();
+        return await this.page.locator(this.inventoryItem).count();
     }
 
     /**
@@ -55,7 +61,7 @@ export class InventoryPage extends BasePage {
      * @param {string} productName - Name of the product
      */
     async addProductToCart(productName) {
-        await this.page.click(this.addToCartButton(productName));
+        await this.page.locator(this.addToCartButton(productName)).click();
     }
 
     /**
@@ -63,7 +69,21 @@ export class InventoryPage extends BasePage {
      * @param {string} productName - Name of the product
      */
     async removeProductFromCart(productName) {
-        await this.page.click(this.removeFromCartButton(productName));
+        await this.page.locator(this.removeFromCartButton(productName)).click();
+    }
+
+    /**
+     * Check if product is in cart (has Remove button)
+     * @param {string} productName - Name of the product
+     * @returns {Promise<boolean>} True if product in cart
+     */
+    async isProductInCart(productName) {
+        try {
+            const removeButton = this.page.locator(this.removeFromCartButton(productName));
+            return await removeButton.isVisible({ timeout: 2000 });
+        } catch {
+            return false;
+        }
     }
 
     /**
@@ -106,7 +126,19 @@ export class InventoryPage extends BasePage {
         };
         
         await this.page.selectOption(this.productSortDropdown, sortValues[sortOption]);
-        await this.page.waitForTimeout(500); // Wait for sort to apply
+        await this.page.waitForLoadState('networkidle'); // Better than timeout
+    }
+
+    /**
+     * Get product price by name
+     * @param {string} productName - Name of the product
+     * @returns {Promise<string>} Product price
+     */
+    async getProductPrice(productName) {
+        const priceLocator = this.page.locator(
+            `//div[text()='${productName}']/ancestor::div[@class='inventory_item']//div[@class='inventory_item_price']`
+        );
+        return await priceLocator.textContent();
     }
 
     /**
@@ -115,14 +147,21 @@ export class InventoryPage extends BasePage {
     async logout() {
         await this.page.click(this.burgerMenuButton);
         await this.waitForElement(this.logoutLink);
+        await this.page.waitForTimeout(300); // Wait for menu animation
         await this.page.click(this.logoutLink);
+        await this.page.waitForURL('**/'); // Verify redirect to login
     }
 
     /**
      * Verify user is on inventory page
-     * @returns {boolean} True if on inventory page
+     * @returns {Promise<boolean>} True if on inventory page
      */
-    isOnInventoryPage() {
-        return this.getCurrentUrl().includes('/inventory.html');
+    async isOnInventoryPage() {
+        try {
+            await this.page.waitForURL('**/inventory.html', { timeout: 5000 });
+            return this.getCurrentUrl().includes('/inventory.html');
+        } catch {
+            return false;
+        }
     }
 }

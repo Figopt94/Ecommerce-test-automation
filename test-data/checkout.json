@@ -1,0 +1,22 @@
+{
+    "validCustomer": {
+        "firstName": "João",
+        "lastName": "Silva",
+        "zipCode": "1000-001"
+    },
+    "missingFirstName": {
+        "firstName": "",
+        "lastName": "Silva",
+        "zipCode": "1000-001"
+    },
+    "missingLastName": {
+        "firstName": "João",
+        "lastName": "",
+        "zipCode": "1000-001"
+    },
+    "missingZipCode": {
+        "firstName": "João",
+        "lastName": "Silva",
+        "zipCode": ""
+    }
+}
